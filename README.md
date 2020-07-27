@@ -1,1 +1,1 @@
-# martingale-calcuator
+# martingale-calculator
