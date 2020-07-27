@@ -9,7 +9,7 @@ const Form2 =({calcular})=> {
         e.preventDefault()
         calcular(minimumInvestment, payout, stepsN, maximumInvestment);
     }
-    console.log(payout)
+
   return (
     <form onSubmit={handleSubmit}>
         <div className="input-block">

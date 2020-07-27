@@ -3,12 +3,16 @@ import Form from '../../components/Form/index.js'
 import Form2 from '../../components/Form2/index.js'
 import Form3 from '../../components/Form3/index.js'
 import './styles.css'
+import Chart from '../../components/Chart/index.js'
+
 
 function martingale(a,b,c){
- 
+ if (c>30){
+   return;
+ }
   var steps= [];
   steps[0]=a;
-  var i =2;
+  var i =1;
   b=(b/100)*a
   
   while (i < c+1) {
@@ -24,7 +28,9 @@ function martingale(a,b,c){
     i++;
   }
 
-  return  steps
+
+
+  return steps
 
 
 }
@@ -57,55 +63,79 @@ function martingale2(a,b,c){
 function martingale3(b,c,d){
  
   var steps= [];
+  steps.fill(0,[ 0[ c+1]])
   steps[c+1]=d;
   var i = c;
   b=(b/100)
   
-  while (i>0) {
-    console.log("d",d)
-    //console.log("b",b)*/
-
+  while (i>=0 ) {
 
     steps[i] = (d*b)/(1+b)
     /*b=a+b;*/
     d=steps[i];
+  
+    if(d<0.1){
+      steps[0]=-1;
     
-
-
+      break;  
+    }
 
     i--;
   }
 
-  return  steps
+  return  steps;
 
 
 }
 
 
 function Wrapper() {
-  const [steps, setSteps] = useState([]);
+  var [steps, setSteps] = useState([]);
  
-  const [showAnswer, setShowAnswer] = useState(false);
+  var [showAnswer, setShowAnswer] = useState(false);
+ 
   const [addMode] = useState(["Retornar passos", "Retornar passos até o investimento final", "Retornar investimento inicial"])
   const Add = addMode.map(Add => Add)
 
-  const [modeID, setmodeID] = useState(1);
+  const [modeID, setmodeID] = useState(0);
+  var [ok, setOk] = useState("");
 
-
-
+  
 
 
   function calcular(minimumInvestment,payout,stepsN,maximumInvestment){
    
-    setShowAnswer(true);
+ 
     if(maximumInvestment===""){
-    
-      return setSteps(martingale(parseFloat(minimumInvestment),parseFloat(payout),parseInt(stepsN)));
+      
+      setSteps(martingale(parseFloat(minimumInvestment),parseFloat(payout),parseInt(stepsN)));
+      setShowAnswer(true);
     }else if (minimumInvestment===""){
-      return setSteps(martingale3(parseFloat(payout),parseInt(stepsN),parseFloat(maximumInvestment)))
+     
+      setShowAnswer(false);
+      
+      var aux= martingale3(parseFloat(payout),parseInt(stepsN),parseFloat(maximumInvestment))
+      setSteps(aux);
+       
+  
+
+      
+      if (aux[0]===-1){
+         setOk("os número de passos foi excedido para o valor máximo de investimento ")
+         setShowAnswer(false);
+         
+      }else{
+        setOk("")
+         setShowAnswer(true);
+      }
+
+    
+      
   
     }else if(stepsN ===""){
-      return setSteps(martingale2(parseFloat(minimumInvestment),parseFloat(payout),parseFloat(maximumInvestment)));
+     
+      setSteps(martingale2(parseFloat(minimumInvestment),parseFloat(payout),parseFloat(maximumInvestment)));
+      setShowAnswer(true);
     }
 
 
@@ -113,16 +143,34 @@ function Wrapper() {
 
 
 
+  /*function dividirTexto (steps){
+    var result= steps.map(item => ( 
+      <li key={item.id}> {item.toFixed(2)}</li>
+    ))
+
+    return result;
+  }
+*/
+function dividirTexto (steps){
+  var result= steps.map(item => ( 
+    <li key={item.id}> {item.toFixed(2)}</li>
+    
+  ))
+    
+  return result 
+}
+
   return (
 
-   
+ 
     <div className="Wrapper">
-
+  
       <div className="content-area">
+      
         <div className="heading">
           <h1> Calculadora  Martingale</h1>
         </div>
-        <div className="cards">
+        <div className="row">
           <div className="card ">
           
             <div className="select" name="slct" id="slct">
@@ -131,7 +179,7 @@ function Wrapper() {
                 value={modeID}
                 onChange={(e)=> {setmodeID(Number(e.target.value)); setSteps([]);setShowAnswer(false)}}
                 className="browser-default custom-select" >
-                  <option  key={0} value={0}disabled>selecione o modo</option>
+                  <option  value={0}disabled>selecione o modo</option>
                 {
                    
                 Add.map((mode, key) => <option key={key+1}value={key+1}>{mode}</option>)
@@ -140,45 +188,56 @@ function Wrapper() {
 
             </div>
 
-            {modeID === 1? <Form calcular={calcular}/>:modeID===2?<Form2 calcular={calcular}/>:modeID===3?<Form3 calcular={calcular}/>:""}
-            
-        
-          </div>
-
-          <div className="card">
+            {modeID === 1? <Form calcular={calcular} />:modeID===2?<Form2 calcular={calcular}/>:modeID===3?<Form3 calcular={calcular} ok={ok}/>:""}
            
+                
+          </div>
+              
+          {showAnswer===true?<div className={"card1 column-1 answer-passes-open"}>
+        
             {showAnswer===true && (modeID === 1? <div className="answer">passos</div>: modeID === 2?
             <div className="answer">quantidade de passos: <div className="answer-box">{steps.length}</div><br/></div>:
-             modeID === 3?
+             modeID === 3 && steps[0]!== -1?
              <div className="answer">O investimento inicial deve ser:
               <div className="answer-box">{
-              steps[1].toFixed(2)}
+                
+                steps[0]!== -1? 
+              steps[0].toFixed(2):""}
               </div>
               <br/> Passos <br/><br/>
 
-             </div>:"")}
-              <div className="answer-passes">
+             </div>:null)}
+              <div className="answer-passes-open">
 
 
-                {showAnswer===true && 
+                {showAnswer===true && steps[0]!== -1 &&
             
                   <ol className="list-numbered">
-                  
-                    {steps.map(item => (
-                      <li key={item.id}> {item.toFixed(2)}</li>
-                    ))}
+                 
+                    {dividirTexto(steps)}
+                    
+
                   </ol>
+
+
                 }
+
               </div>
          
 
 
-          </div>
-          <div className="card">
-            <p>some information</p>
+          </div>:null}
+
+          {showAnswer===true && steps[0]!==-1 ?<div className="card column-2 mychart" id="myChart">
+ 
+            {showAnswer===true? <Chart steps={steps}/>:null}
+            
+            <canvas id="myChart">
+
+            </canvas>
 
 
-          </div>
+          </div>:null}
         </div>
       </div>
 
