@@ -16,8 +16,7 @@ function martingale(a,b,c){
   b=(b/100)*a
   
   while (i < c+1) {
-    console.log("a",a)
-    console.log("b",b)
+  
    
 
    
@@ -140,20 +139,9 @@ function Wrapper() {
 
 
   }
-
-
-
-  /*function dividirTexto (steps){
-    var result= steps.map(item => ( 
-      <li key={item.id}> {item.toFixed(2)}</li>
-    ))
-
-    return result;
-  }
-*/
 function dividirTexto (steps){
-  var result= steps.map(item => ( 
-    <li key={item.id}> {item.toFixed(2)}</li>
+  var result= steps.map((item,key)=> ( 
+    <li key={key}> {item.toFixed(2)}</li>
     
   ))
     
@@ -231,10 +219,10 @@ function dividirTexto (steps){
           {showAnswer===true && steps[0]!==-1 ?<div className="card column-2 mychart" id="myChart">
  
             {showAnswer===true? <Chart steps={steps}/>:null}
-            
-            <canvas id="myChart">
+            <div className="canvas-holder">
 
-            </canvas>
+
+            </div>
 
 
           </div>:null}

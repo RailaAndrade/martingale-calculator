@@ -45,7 +45,7 @@ const Chart =(props)=> {
       };
       const options ={
 
-    
+            responsive:true,
             legend: {
                 display:false
             }
@@ -54,10 +54,11 @@ const Chart =(props)=> {
       
     return (
 
-        <div>
-       
-        <Line data={data} options={options}/>
-      </div>
+      
+        <Line data={data} options={options}  />
+  
+      
+  
     );
 
 

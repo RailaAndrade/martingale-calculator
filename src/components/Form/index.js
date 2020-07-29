@@ -37,7 +37,7 @@ const Form =({calcular})=> {
       }
      
     }
-    console.log(payout)
+
   return (
     <form onSubmit={handleSubmit}>
         <div className="input-block">
